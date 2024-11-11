@@ -25,7 +25,11 @@ public class ComponentFactory { //clasa Singleton
     //!! de modificat ca in laborator
     public static ComponentFactory getInstance(Boolean componentsForTest, Stage primaryStage){//lazy load
         if (instance==null){
-            instance = new ComponentFactory(componentsForTest,primaryStage);
+            synchronized (ComponentFactory.class){
+                if (instance == null) {
+                    instance = new ComponentFactory(componentsForTest, primaryStage);
+                }
+            }
         }
         return instance;
     }

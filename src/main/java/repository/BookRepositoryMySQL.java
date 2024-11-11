@@ -3,10 +3,7 @@ package repository;
 import model.Book;
 import model.builder.BookBuilder;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -35,17 +32,19 @@ public class BookRepositoryMySQL implements BookRepository{
     }
 
     @Override
-    public Optional<Book> findById(Long id) {
-        String sql="SELECT * FROM book WHERE id="  + id;
-        Optional<Book> book =Optional.empty();
+    public Optional<Book> findById(Long id) { //am adaugat si aici preparedStatement deoarece se introduce un input si nu vream sa riscam sa fie o comanda care sa afecteze tabela
+        String sql = "SELECT * FROM book WHERE id = ?";
+        Optional<Book> book = Optional.empty();
 
-        try{
-            Statement statement= connection.createStatement();
-            ResultSet resultSet= statement.executeQuery(sql);
-            if ( resultSet.next()){ //ne duce la primul rezultat, nu il sare
-                book=Optional.of(getBookFromResultSet(resultSet));
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1, id); // Setează valoarea ID-ului
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) { // Dacă există un rezultat, construiește obiectul Book
+                book = Optional.of(getBookFromResultSet(resultSet));
             }
-        }catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return book;
@@ -53,16 +52,21 @@ public class BookRepositoryMySQL implements BookRepository{
 
     @Override
     public boolean save(Book book) {
-        String newSql = "INSERT INTO book VALUES(null, \'" + book.getAuthor() + "\', \'" + book.getTitle() +"\', \'" + book.getPublishedDate()+ "\');";
-
+        //String newSql = "INSERT INTO book VALUES(null, \'" + book.getAuthor() + "\', \'" + book.getTitle() +"\', \'" + book.getPublishedDate()+ "\');";
+          String newSql="INSERT INTO book VALUES(null,?,?,?);";
         try{
-            Statement statement= connection.createStatement();
-            statement.executeUpdate(newSql);
+            //Statement statement= connection.createStatement();
+            //statement.executeUpdate(newSql);
+            PreparedStatement preparedStatement = connection.prepareStatement(newSql);
+            preparedStatement.setString(1,book.getAuthor());
+            preparedStatement.setString(2,book.getTitle());
+            preparedStatement.setDate(3, java.sql.Date.valueOf(book.getPublishedDate()));
+            int rowsInserted = preparedStatement.executeUpdate();
+            return (rowsInserted != 1) ? false : true;
         }catch(SQLException e){
             e.printStackTrace();
             return false;
         }
-        return true;
     }
 
     @Override

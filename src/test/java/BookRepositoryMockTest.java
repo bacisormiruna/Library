@@ -17,7 +17,7 @@ public class BookRepositoryMockTest {
     private static BookRepository bookRepository;
     @BeforeAll
     public static void setup() {
-        bookRepository= new BookRepositoryMock();
+        bookRepository = new BookRepositoryMock();
     }
 
     @Test
@@ -28,7 +28,7 @@ public class BookRepositoryMockTest {
 
     @Test
     public void findById(){
-        final Optional<Book> book=bookRepository.findById(1L);
+        final Optional<Book> book = bookRepository.findById(1L);
         assertTrue(book.isEmpty());
     }
 
@@ -36,5 +36,4 @@ public class BookRepositoryMockTest {
     public void save(){
         assertTrue(bookRepository.save(new BookBuilder().setTitle("Ion").setAuthor("Liviu Rebreanu").setPublishedDate(LocalDate.of(1900,10,10)).build()));
     }
-
 }
