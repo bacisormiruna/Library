@@ -13,7 +13,7 @@ public class JDBConnectionWrapper {
 
     private static final int TIMEOUT=5;
 
-    private Connection connection;
+    private static Connection connection;//aici am moficicat in static!!!!!
 
     public JDBConnectionWrapper(String schema){
         try{
@@ -44,7 +44,7 @@ public class JDBConnectionWrapper {
         return connection.isValid(TIMEOUT);
     }
 
-    public Connection getConnection(){
+    public static Connection getConnection(){
         return connection;
     }
 }
