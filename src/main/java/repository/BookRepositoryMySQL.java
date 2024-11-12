@@ -31,7 +31,7 @@ public class BookRepositoryMySQL implements BookRepository{
         return books;
     }
 
-    @Override
+   /* @Override  --functie de findById ca sa ma asigur ca input-urile sunt corecte
     public Optional<Book> findById(Long id) { //am adaugat si aici preparedStatement deoarece se introduce un input si nu vream sa riscam sa fie o comanda care sa afecteze tabela
         String sql = "SELECT * FROM book WHERE id = ?";
         Optional<Book> book = Optional.empty();
@@ -48,18 +48,38 @@ public class BookRepositoryMySQL implements BookRepository{
             e.printStackTrace();
         }
         return book;
+    }*/
+
+    @Override
+    public Optional<Book> findById(Long id) {
+        String sql = "SELECT * FROM book WHERE id = " + id;
+        Optional<Book> book = Optional.empty();
+
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+
+            if (resultSet.next()) { // Dacă există un rezultat, construiește obiectul Book
+                book = Optional.of(getBookFromResultSet(resultSet));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return book;
     }
+
+
 
     @Override
     public boolean save(Book book) {
         //String newSql = "INSERT INTO book VALUES(null, \'" + book.getAuthor() + "\', \'" + book.getTitle() +"\', \'" + book.getPublishedDate()+ "\');";
-          String newSql="INSERT INTO book VALUES(null,?,?,?);";
+          String newSql = "INSERT INTO book VALUES(null, ?, ?, ?);";
         try{
             //Statement statement= connection.createStatement();
             //statement.executeUpdate(newSql);
             PreparedStatement preparedStatement = connection.prepareStatement(newSql);
-            preparedStatement.setString(1,book.getAuthor());
-            preparedStatement.setString(2,book.getTitle());
+            preparedStatement.setString(1, book.getAuthor());
+            preparedStatement.setString(2, book.getTitle());
             preparedStatement.setDate(3, java.sql.Date.valueOf(book.getPublishedDate()));
             int rowsInserted = preparedStatement.executeUpdate();
             return (rowsInserted != 1) ? false : true;

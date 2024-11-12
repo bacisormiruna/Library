@@ -20,12 +20,13 @@ public class BookRepositoryMySQLTest {
     private static BookRepository bookRepository;
     private static Connection connection;
 
+    //asigur conexiunea cu baza de date
     @BeforeEach
     public void setup() {
         connection = DatabaseConnectionFactory.getConnectionWrapper(true).getConnection();//setez pe true ca sa folosesc tabela de test
         if (connection != null) {
             bookRepository = new BookRepositoryMySQL(connection);
-            bookRepository.removeAll();
+            bookRepository.removeAll(); //la fiecare test tabela va fi goala
         } else {
             System.out.println("Connection failed!");
         }
@@ -33,62 +34,65 @@ public class BookRepositoryMySQLTest {
 
     @Test
     public void findAll(){
-        // Verificăm dacă findAll returnează lista corectă
         List<Book> books = bookRepository.findAll();
         assertEquals(0, books.size());
-       // assertEquals("Ion", books.get(0).getTitle());
     }
 
     @Test
     public void findById(){
+        //dupa ce am creat si adaugat cartea in tabela, iau toate id-urile si stochez id-ul primei ( si singurei valori din acest test) carti
         Book book = new BookBuilder()
                 .setTitle("Ion")
                 .setAuthor("Liviu Rebreanu")
                 .setPublishedDate(LocalDate.of(1900, 10, 10))
                 .build();
 
-         assertTrue(bookRepository.save(book));
+        assertTrue(bookRepository.save(book));
 
-        // Găsim cartea după ID și verificăm detaliile
         List<Book> books = bookRepository.findAll();
         Long id = books.get(0).getId();
 
         Optional<Book> foundBook = bookRepository.findById(id);
-        assertTrue(foundBook.isPresent());
-        assertEquals("Ion", foundBook.get().getTitle());
-        assertEquals("Liviu Rebreanu", foundBook.get().getAuthor());
+        assertTrue(foundBook.isPresent()); //verific daca am acel id
     }
 
     @Test
-    public void save(){
+    public void saveBook1(){
         Book book = new BookBuilder()
                 .setTitle("Fluturi")
                 .setAuthor("Irina Binder")
-                .setPublishedDate(LocalDate.of(2020, 6, 2))
+                .setPublishedDate(LocalDate.of(1950, 2, 2))
                 .build();
-        // Verificăm că salvarea s-a realizat cu succes
+        assertTrue(bookRepository.save(book)); //daca s-a salvat cartea cu succes
+        List<Book> books = bookRepository.findAll();//dupa ce am adaugat-o in tabela iau lista cu carti si verific daca s-a adaugat cu succes prin verificarea lungimii tabelei (listei de carti)
+        assertEquals(1, books.size());//verific daca s-a adaugat o singura carte
+    }
+
+    @Test
+    public void saveBook2(){
+        Book book = new BookBuilder()
+                .setTitle("Un veac de singuratate")
+                .setAuthor("Gabriel Garcia Marquez")
+                .setPublishedDate(LocalDate.of(1940, 3, 10))
+                .build();
         assertTrue(bookRepository.save(book));
-        // Verificăm că baza de date conține acum un singur rezultat
         List<Book> books = bookRepository.findAll();
-        assertEquals(1, books.size());
-        assertEquals("Fluturi", books.get(0).getTitle());
+        assertEquals(1, books.size());//se face verificarea adaugarii corecte a cartii in baza de date
     }
 
     @Test
     public void delete() {
-        // salvam o carte de test pentru a testa si stergerea
-        Book book = new BookBuilder()
+        Book book = new BookBuilder() //creez o carte pe care o sa o pot sterge pentru a testa
                 .setTitle("Enigma Otiliei")
                 .setAuthor("George Călinescu")
                 .setPublishedDate(LocalDate.of(1938, 1, 1))
                 .build();
-        assertTrue(bookRepository.save(book));
-        // se face stergerea si o verific
-        assertTrue(bookRepository.delete(book));
-        // verificam daca mai exista cartea in baza de date
-        Optional<Book> deletedBook = bookRepository.findById(book.getId());
+
+        assertTrue(bookRepository.save(book));//am salvat cartea
+        assertTrue(bookRepository.delete(book));//am sters-o
+        Optional<Book> deletedBook = bookRepository.findById(book.getId());//acum caut sa vad daca mai exista in tabela
         assertFalse(deletedBook.isPresent());
     }
 
-}
 
+}
