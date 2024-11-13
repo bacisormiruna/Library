@@ -9,6 +9,10 @@ public class BookDTOBuilder {
         bookDTO = new BookDTO();
     }
 
+    public BookDTOBuilder setId(Long id){
+        bookDTO.setId(id);
+        return this;
+    }
     public BookDTOBuilder setAuthor(String author){
         bookDTO.setAuthor(author);
         return this;
@@ -16,6 +20,11 @@ public class BookDTOBuilder {
 
     public BookDTOBuilder setTitle(String title){
         bookDTO.setTitle(title);
+        return this;
+    }
+
+    public BookDTOBuilder setStock(Integer stock){//am adaugat si set pentru noua coloana de stoc
+        bookDTO.setStock(stock);
         return this;
     }
 

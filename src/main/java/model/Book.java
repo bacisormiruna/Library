@@ -7,6 +7,7 @@ public class Book {
     private String title;
     private String author;
     private LocalDate publishedDate;
+    private Integer stock;
 
     public Long getId() {
         return id;
@@ -40,8 +41,21 @@ public class Book {
         this.publishedDate = publishedDate;
     }
 
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock){
+        if (stock != null) {
+            this.stock = stock;
+        } else {
+            this.stock = 0; // Valoare implicită dacă stock este null
+        }
+    }
+
+
     @Override
     public String toString(){
-        return"Book Id: "+ id + " Title: " + title + " Author: " + author + " Published date: "+publishedDate;
+        return"Book Id: "+ id + " Title: " + title + " Author: " + author + " Published date: " + publishedDate + " Stock: " + stock;
     }
 }

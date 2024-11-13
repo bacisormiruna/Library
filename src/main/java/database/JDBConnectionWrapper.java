@@ -13,12 +13,12 @@ public class JDBConnectionWrapper {
 
     private static final int TIMEOUT=5;
 
-    private static Connection connection;//aici am moficicat in static!!!!!
+    private Connection connection;
 
     public JDBConnectionWrapper(String schema){
         try{
             Class.forName(JDBC_DRIVER);//reflection
-            connection= DriverManager.getConnection(DB_URL+schema,USER,PASSWORD);
+            connection= DriverManager.getConnection(DB_URL + schema, USER,PASSWORD);
             createTables();//sa ne creeze tabela
         }catch (ClassNotFoundException e){ //cele mai specifice
             e.printStackTrace();
@@ -34,17 +34,18 @@ public class JDBConnectionWrapper {
                 " author VARCHAR(500) NOT NULL," +
                 " title VARCHAR(500) NOT NULL," +
                 " publishedDate datetime DEFAULT NULL," +
+                " stock INT DEFAULT 0 NOT NULL," +
                 " PRIMARY KEY(id)," +
                 " UNIQUE KEY id_UNIQUE(id)" +
                 ") ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8";
         statement.execute(sql);
     }
 
-    public boolean testConnection() throws SQLException{
+    public boolean testConnection() throws SQLException{//testam daca am avut sau nu o conexiune
         return connection.isValid(TIMEOUT);
     }
 
-    public static Connection getConnection(){
+    public Connection getConnection(){//returnam conexiunea cu baza de date
         return connection;
     }
 }

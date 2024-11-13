@@ -21,8 +21,8 @@ public class BookRepositoryMySQLTest {
     private static Connection connection;
 
     //asigur conexiunea cu baza de date
-    @BeforeEach
-    public void setup() {
+    @BeforeAll
+    public static void setup() {//pentru ca setup este o metoda statica trebuie sa fac si connection static, daca modific metoda si sterg static pot sa am si connection fara static
         connection = DatabaseConnectionFactory.getConnectionWrapper(true).getConnection();//setez pe true ca sa folosesc tabela de test
         if (connection != null) {
             bookRepository = new BookRepositoryMySQL(connection);
@@ -93,6 +93,4 @@ public class BookRepositoryMySQLTest {
         Optional<Book> deletedBook = bookRepository.findById(book.getId());//acum caut sa vad daca mai exista in tabela
         assertFalse(deletedBook.isPresent());
     }
-
-
 }

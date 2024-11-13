@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class BookMapper {//mapare de la Book la BookDTO
-    public static BookDTO convertBookToBookDTO(Book book){
-        return new BookDTOBuilder().setTitle(book.getTitle()).setAuthor(book.getAuthor()).build();
+    public static BookDTO convertBookToBookDTO(Book book){//am adaugat si setId pentru ca am nevoie sa mi se stocheze in baza de date valorile pentru id ca sa pot tine minte stocul si id-ul cartii pe care o updatez
+        return new BookDTOBuilder().setId(book.getId()).setTitle(book.getTitle()).setAuthor(book.getAuthor()).setStock(book.getStock()).build();
     }
 
-    public static Book convertBookDTOToBook(BookDTO bookDTO){
-        return new BookBuilder().setTitle(bookDTO.getTitle()).setAuthor(bookDTO.getAuthor()).setPublishedDate(LocalDate.of(2010,1,1)).build();
+    public static Book convertBookDTOToBook(BookDTO bookDTO){//mapare de la BookDTO la Book
+        return new BookBuilder().setId(bookDTO.getId()).setTitle(bookDTO.getTitle()).setAuthor(bookDTO.getAuthor()).setPublishedDate(LocalDate.of(2010,1,1)).setStock(bookDTO.getStock()).build();
     }
 
     public static List<BookDTO> convertBookListToBookDTOList(List<Book> books){
