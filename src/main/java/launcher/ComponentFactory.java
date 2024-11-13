@@ -24,7 +24,7 @@ public class ComponentFactory { //clasa Singleton
 
     //!! de modificat ca in laborator
     public static ComponentFactory getInstance(Boolean componentsForTest, Stage primaryStage){//lazy load
-        if (instance==null){
+        if (instance==null){//multithreading safe
             synchronized (ComponentFactory.class){
                 if (instance == null) {
                     instance = new ComponentFactory(componentsForTest, primaryStage);
@@ -34,7 +34,8 @@ public class ComponentFactory { //clasa Singleton
         return instance;
     }
 
-    public ComponentFactory(Boolean componentsForTest, Stage primaryStage){
+    //modific din public in private constructorul
+    private ComponentFactory(Boolean componentsForTest, Stage primaryStage){
         Connection connection = DatabaseConnectionFactory.getConnectionWrapper(componentsForTest).getConnection();
         this.bookRepository = new BookRepositoryMySQL(connection);
         this.bookService = new BookServiceImpl(bookRepository);

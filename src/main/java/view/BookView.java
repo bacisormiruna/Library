@@ -11,22 +11,25 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import model.Book;
 import view.model.BookDTO;
 
 
 import java.util.List;
-//DTO Data Transfer Object scopuri multiple: pentru informatii confidentiale
+//DTO =  Data Transfer Object scopuri multiple: pentru informatii confidentiale
 public class BookView {
     private TableView bookTableView; //construit in mod dinamic sa extraga automat ce am eu nevoie
     private final ObservableList<BookDTO> booksObservableList; //se update-aza automat daca cumva se executa modificari asupra unei tabele
     private TextField authorTextField;
     private TextField titleTextField;
-
+   // private TextField stockTextField;
+    private ComboBox<Integer> stockComboBox;
     private Label authorLabel;
     private Label titleLabel;
+    private Label stockLabel;
     private Button saveButton;
     private Button deleteButton;
+
+    private Button saleButton;
 
     public BookView(Stage primaryStage, List<BookDTO> books){
         primaryStage.setTitle("Library");
@@ -34,7 +37,7 @@ public class BookView {
         GridPane gridPane = new GridPane();
         initializeGridPage(gridPane);
 
-        Scene scene=new Scene(gridPane,720,480);
+        Scene scene=new Scene(gridPane,960,640);
         primaryStage.setScene(scene);
 
         booksObservableList = FXCollections.observableArrayList(books);//sa nu mai facem nicaieri in cod o alta atribuire deoarece se va rupe legatura cu tableView si nu se vor mai vedea modificarile
@@ -47,8 +50,8 @@ public class BookView {
 
     private void initializeGridPage(GridPane gridPane){
         gridPane.setAlignment(Pos.CENTER);
-        gridPane.setHgap(10);
-        gridPane.setVgap(10);
+        gridPane.setHgap(15);
+        gridPane.setVgap(15);
         gridPane.setPadding(new Insets(25,25,25,25));
     }
 
@@ -58,12 +61,23 @@ public class BookView {
 
         TableColumn<BookDTO, String> titleColumn = new TableColumn<BookDTO, String>("Title");
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+        titleColumn.setPrefWidth(300);
+
         TableColumn<BookDTO, String> authorColumn = new TableColumn<BookDTO, String>("Author");
         authorColumn.setCellValueFactory(new PropertyValueFactory<>("author"));
+        authorColumn.setPrefWidth(300);
 
-        bookTableView.getColumns().addAll(titleColumn,authorColumn);
+        TableColumn<BookDTO, String> stockColumn = new TableColumn<BookDTO, String>("Stock");
+        stockColumn.setCellValueFactory(new PropertyValueFactory<>("stock"));
+        stockColumn.setPrefWidth(100);
+
+        bookTableView.getColumns().addAll(titleColumn,authorColumn,stockColumn);
         bookTableView.setItems(booksObservableList);
 
+        bookTableView.setPrefWidth(700); // Adjust based on your desired width
+
+        // Set a resize policy to let columns expand
+        bookTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         gridPane.add(bookTableView,0,0,5,1);
     }
 
@@ -78,11 +92,23 @@ public class BookView {
         authorTextField=new TextField();
         gridPane.add(authorTextField,4,1);
 
+        stockLabel = new Label("Stock");
+        gridPane.add(stockLabel,5,1);
+        stockComboBox = new ComboBox<>();
+        stockComboBox.getItems().addAll(10, 15, 20, 25, 30, 50);
+        stockComboBox.setPromptText("Please select stock amount");
+        gridPane.add(stockComboBox, 6, 1);
+        //stockTextField = new TextField();
+        //gridPane.add(stockTextField, 6, 1);
+
         saveButton = new Button("Save");
-        gridPane.add(saveButton,5,1);
+        gridPane.add(saveButton,7,1);
 
         deleteButton = new Button("Delete");
-        gridPane.add(deleteButton,6,1);
+        gridPane.add(deleteButton,8,1);
+
+        saleButton = new Button("Sale");
+        gridPane.add(saleButton,9,1);
     }
 
     public void addSaveButtonListener(EventHandler<ActionEvent> saveButtonListener){
@@ -91,6 +117,10 @@ public class BookView {
 
     public void addDeleteButtonListener(EventHandler<ActionEvent> deleteButtonListener){
         deleteButton.setOnAction(deleteButtonListener);
+    }
+
+    public void addSaleButtonListener(EventHandler<ActionEvent> saleButtonListener){
+        saleButton.setOnAction(saleButtonListener);
     }
 
     public void addDisplayAlertMessage(String title, String header, String contentInfo){
@@ -107,6 +137,14 @@ public class BookView {
 
     public String getAuthor() {
         return authorTextField.getText();
+    }
+
+    public Integer getStock() {
+        if (stockComboBox != null) {
+            return stockComboBox.getValue();
+        } else {
+            return 0;
+        }
     }
 
     public void addBookToObservableList(BookDTO bookDTO){

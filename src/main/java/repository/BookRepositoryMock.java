@@ -8,6 +8,7 @@ import java.util.Optional;
 
 //Optional.empty();//inlocuitor pentru null
 public class BookRepositoryMock implements BookRepository{
+    //emulam o baza de date folosind un ArrayList
     private final List<Book> books;//List este o interfata, iar ArrayList este o clasa/ o implementare
     //am folosit final pentru a seta imutabilitatea
     public BookRepositoryMock(){
@@ -38,5 +39,20 @@ public class BookRepositoryMock implements BookRepository{
     @Override
     public void removeAll() {
         books.clear();
+    }
+
+    @Override //trebuia sa am o metoda implementata de update si in Mock
+    public boolean update(Book bookUpdated) {
+        return books.parallelStream()
+                .filter(it -> it.getId().equals(bookUpdated.getId()))
+                .findFirst()
+                .map(it -> {//daca findFirst gaseste o carte atunci se executa cu map actualizarea campurilor din tabela corespunzatoare acelei carti cu valorile corespunzatoare din obiectul Book transmis ca si parametru metodei
+                    it.setTitle(bookUpdated.getTitle());
+                    it.setAuthor(bookUpdated.getAuthor());
+                    it.setPublishedDate(bookUpdated.getPublishedDate());
+                    it.setStock(bookUpdated.getStock());
+                    return true;
+                })
+                .orElse(false);
     }
 }

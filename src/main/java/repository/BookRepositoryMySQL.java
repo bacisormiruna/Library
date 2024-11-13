@@ -17,7 +17,7 @@ public class BookRepositoryMySQL implements BookRepository{
     }
     @Override
     public List<Book> findAll() {
-        String sql="SELECT * FROM book";
+        String sql = "SELECT * FROM book;";
         List<Book> books = new ArrayList<>();
         try {
             Statement statement = connection.createStatement();
@@ -59,7 +59,7 @@ public class BookRepositoryMySQL implements BookRepository{
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
 
-            if (resultSet.next()) { // Dacă există un rezultat, construiește obiectul Book
+            if (resultSet.next()) { // Dacă există un rezultat, construiește obiectul Book -if pentru ca avem un singur element si id-ul este unic
                 book = Optional.of(getBookFromResultSet(resultSet));
             }
         } catch (SQLException e) {
@@ -68,12 +68,14 @@ public class BookRepositoryMySQL implements BookRepository{
         return book;
     }
 
-
-
     @Override
     public boolean save(Book book) {
+
+        if (book.getStock() == null) {
+            book.setStock(0); // Setez o valoare default 0
+        }
         //String newSql = "INSERT INTO book VALUES(null, \'" + book.getAuthor() + "\', \'" + book.getTitle() +"\', \'" + book.getPublishedDate()+ "\');";
-          String newSql = "INSERT INTO book VALUES(null, ?, ?, ?);";
+          String newSql = "INSERT INTO book VALUES(null, ?, ?, ?, ?);";
         try{
             //Statement statement= connection.createStatement();
             //statement.executeUpdate(newSql);
@@ -81,7 +83,9 @@ public class BookRepositoryMySQL implements BookRepository{
             preparedStatement.setString(1, book.getAuthor());
             preparedStatement.setString(2, book.getTitle());
             preparedStatement.setDate(3, java.sql.Date.valueOf(book.getPublishedDate()));
+            preparedStatement.setLong(4, book.getStock());
             int rowsInserted = preparedStatement.executeUpdate();
+
             return (rowsInserted != 1) ? false : true;
         }catch(SQLException e){
             e.printStackTrace();
@@ -104,6 +108,7 @@ public class BookRepositoryMySQL implements BookRepository{
 
     @Override
     public void removeAll() {
+        //daca foloseam TRUNCATE se reluau id-urile de la 0
         String sql="DELETE FROM book WHERE id >=0;";//id-urile continua de la id-ul curent sters sa se autoincrementeze
         try{
             Statement statement= connection.createStatement();
@@ -112,12 +117,37 @@ public class BookRepositoryMySQL implements BookRepository{
             e.printStackTrace();}
     }
 
-    private Book getBookFromResultSet(ResultSet resultSet) throws SQLException{
+    private Book getBookFromResultSet(ResultSet resultSet) throws SQLException {
         return new BookBuilder()
                 .setId(resultSet.getLong("id"))
                 .setTitle(resultSet.getString("title"))
                 .setAuthor(resultSet.getString("author"))
                 .setPublishedDate(new java.sql.Date(resultSet.getDate("publishedDate").getTime()).toLocalDate())
+                .setStock(resultSet.getInt("stock"))
                 .build();
+    }
+    @Override
+    public boolean update(Book book) {
+        if (book.getId() == null) {
+            System.out.println("Book ID is null, cannot update the book.");
+            return false;  // Sau poți arunca o excepție personalizată dacă vrei
+        }
+        String sql = "UPDATE book SET author = ?, title = ?, publishedDate = ?, stock = ? WHERE id = ?";
+        try{
+            PreparedStatement statement = connection.prepareStatement(sql);
+
+            statement.setString(1, book.getAuthor());
+            statement.setString(2, book.getTitle());
+            statement.setDate(3, java.sql.Date.valueOf(book.getPublishedDate()));
+            statement.setInt(4, book.getStock());
+            statement.setLong(5, book.getId());
+
+            int rowsUpdated = statement.executeUpdate();
+            return rowsUpdated > 0; // Return true if at least one row was updated
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
