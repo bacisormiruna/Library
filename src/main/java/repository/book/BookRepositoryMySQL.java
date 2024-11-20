@@ -1,4 +1,4 @@
-package repository;
+package repository.book;
 
 import model.Book;
 import model.builder.BookBuilder;
@@ -143,7 +143,7 @@ public class BookRepositoryMySQL implements BookRepository{
             statement.setLong(5, book.getId());
 
             int rowsUpdated = statement.executeUpdate();
-            return rowsUpdated > 0; // Return true if at least one row was updated
+            return rowsUpdated > 0;
 
         } catch (SQLException e) {
             e.printStackTrace();

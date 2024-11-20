@@ -1,14 +1,14 @@
-package service;
+package service.book;
 
 import model.Book;
-import repository.BookRepository;
+import repository.book.BookRepository;
+import service.book.BookService;
 
-import javax.swing.*;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 //Service poate vedea si folosi repository
-public class BookServiceImpl implements BookService{
+public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
 
     public BookServiceImpl(BookRepository bookRepository){

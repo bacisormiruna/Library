@@ -24,11 +24,11 @@ javafx{
     modules = ['javafx.controls', 'javafx.fxml' ]
 }
 
-mainClassName='launcher.Main'
+mainClassName='Main'
 
 jar{
     manifest{
-        attributes 'Main-Class': 'launcher.Main'
+        attributes 'Main-Class': 'Main'
     }
 }
 test {
