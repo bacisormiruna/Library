@@ -16,7 +16,7 @@ import view.model.BookDTO;
 
 import java.util.List;
 //DTO =  Data Transfer Object scopuri multiple: pentru informatii confidentiale
-public class BookView {
+public class BookView  extends GridPane{
     private TableView bookTableView; //construit in mod dinamic sa extraga automat ce am eu nevoie
     private final ObservableList<BookDTO> booksObservableList; //se update-aza automat daca cumva se executa modificari asupra unei tabele
     private TextField authorTextField;
@@ -30,6 +30,7 @@ public class BookView {
     private Button deleteButton;
 
     private Button saleButton;
+    private Scene scene;
 
     public BookView(Stage primaryStage, List<BookDTO> books){
         primaryStage.setTitle("Library");
@@ -37,8 +38,9 @@ public class BookView {
         GridPane gridPane = new GridPane();
         initializeGridPage(gridPane);
 
-        Scene scene=new Scene(gridPane,960,640);
-        primaryStage.setScene(scene);
+        scene=new Scene(gridPane,960,640);
+        //primaryStage.setScene(scene);
+        this.scene=scene;
 
         booksObservableList = FXCollections.observableArrayList(books);//sa nu mai facem nicaieri in cod o alta atribuire deoarece se va rupe legatura cu tableView si nu se vor mai vedea modificarile
 
@@ -146,7 +148,6 @@ public class BookView {
             return 0;
         }
     }
-
     public void addBookToObservableList(BookDTO bookDTO){
         this.booksObservableList.add(bookDTO);
     }
@@ -158,4 +159,5 @@ public class BookView {
     public TableView getBookTableView(){
         return bookTableView;
     }
+
 }

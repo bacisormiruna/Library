@@ -9,9 +9,12 @@ import repository.user.UserRepository;
 import repository.user.UserRepositoryMySQL;
 import service.user.AuthentificationService;
 import service.user.AuthentificationServiceMySQL;
+import view.BookView;
 import view.LoginView;
+import view.model.BookDTO;
 
 import java.sql.Connection;
+import java.util.List;
 
 import static database.Constants.Schemas.PRODUCTION;
 
@@ -71,6 +74,7 @@ public class Main extends Application {
         final AuthentificationService authentificationService = new AuthentificationServiceMySQL(userRepository, rightsRolesRepository);
 
         final LoginView loginView = new LoginView(primaryStage);
-        new LoginController(loginView, authentificationService);
+       // final BookView bookView = new BookView(primaryStage, List < BookDTO > books);
+      //  new LoginController(loginView, authentificationService, primaryStage, bookView);
         }
 }

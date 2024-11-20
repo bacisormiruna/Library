@@ -5,6 +5,7 @@ import model.validation.Notification;
 import repository.security.RightsRolesRepository;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import static database.Constants.Tables.USER;
 public class UserRepositoryMySQL implements UserRepository {
@@ -17,10 +18,31 @@ public class UserRepositoryMySQL implements UserRepository {
         this.rightsRolesRepository = rightsRolesRepository;
     }
 
+    // SQL injection attacks should not work
     @Override
     public List<User> findAll() { //!!! tema
-        return null;
+        List<User> users = new ArrayList<>();
+        String findAllSql = "SELECT * FROM `" + USER + "`";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(findAllSql);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            while (resultSet.next()) {
+                User user = new UserBuilder()
+                        .setId(resultSet.getLong("id"))
+                        .setUsername(resultSet.getString("username"))
+                        .setPassword(resultSet.getString("password"))
+                        .setRoles(rightsRolesRepository.findRolesForUser(resultSet.getLong("id")))
+                        .build();
+                users.add(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Afișează eventualele erori
+        }
+        return users;
+
     }
+
 
     @Override
     public Notification<User> findByUsernameAndPassword(String username, String password) {
