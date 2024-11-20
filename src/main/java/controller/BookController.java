@@ -4,13 +4,11 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.TextInputDialog;
 import mapper.BookMapper;
-import service.BookService;
+import service.book.BookService;
 import view.BookView;
 import view.model.BookDTO;
 import view.model.builder.BookDTOBuilder;
 
-import java.awt.event.ActionListener;
-import java.util.List;
 import java.util.Optional;
 
 public class BookController {
