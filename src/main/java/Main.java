@@ -71,7 +71,6 @@ public class Main extends Application {
         final AuthentificationService authentificationService = new AuthentificationServiceMySQL(userRepository, rightsRolesRepository);
 
         final LoginView loginView = new LoginView(primaryStage);
-        final UserValidator userValidator= new UserValidator(userRepository);
-        new LoginController(loginView, authentificationService, userValidator);
+        new LoginController(loginView, authentificationService);
         }
 }
