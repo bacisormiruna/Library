@@ -3,6 +3,7 @@ package controller;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.TextInputDialog;
+import javafx.stage.Stage;
 import mapper.BookMapper;
 import service.book.BookService;
 import view.BookView;
@@ -14,10 +15,11 @@ import java.util.Optional;
 public class BookController {
     private final BookView bookView;
     private final BookService booksService;
+    //private final Stage stage;
     public BookController(BookView bookView, BookService bookService){
         this.bookView=bookView;
         this.booksService=bookService;
-
+        //this.stage=stage;
         this.bookView.addSaveButtonListener(new SaveButtonListener());
         this.bookView.addDeleteButtonListener(new DeleteButtonListener());
         this.bookView.addSaleButtonListener(new SaleButtonListener());
@@ -39,7 +41,7 @@ public class BookController {
                     bookView.addDisplayAlertMessage("Save Successful","Book Added","Book was successfully added to the database!");
                     bookView.addBookToObservableList(bookDTO);
                 }else{
-                bookView.addDisplayAlertMessage("Save Error","Problem at adding a Book","There was a problem at adding the book to the database. Please try again");
+                    bookView.addDisplayAlertMessage("Save Error","Problem at adding a Book","There was a problem at adding the book to the database. Please try again");
                 }
             }
         }
@@ -48,18 +50,18 @@ public class BookController {
     private class DeleteButtonListener implements EventHandler<ActionEvent> {
         @Override
         public void handle(ActionEvent event) {
-           BookDTO bookDTO = (BookDTO) bookView.getBookTableView().getSelectionModel().getSelectedItem();
-           if (bookDTO != null){
-               boolean deletionSuccessful = booksService.delete(BookMapper.convertBookDTOToBook(bookDTO));
-               if (deletionSuccessful){
-                   bookView.addDisplayAlertMessage("Delete Successful","Book Deleted","Book was successfully deleted from the database");
-                   bookView.removeBookToObservableList(bookDTO);
-               }else{
-                   bookView.addDisplayAlertMessage("Delete Error","Problem at deleting a Book","There was a problem with the database. Please try again");
-               }
-           }else{
-               bookView.addDisplayAlertMessage("Delete Error","Problem at deleting a Book","You must select a book before pressing the delete button.");
-           }
+            BookDTO bookDTO = (BookDTO) bookView.getBookTableView().getSelectionModel().getSelectedItem();
+            if (bookDTO != null){
+                boolean deletionSuccessful = booksService.delete(BookMapper.convertBookDTOToBook(bookDTO));
+                if (deletionSuccessful){
+                    bookView.addDisplayAlertMessage("Delete Successful","Book Deleted","Book was successfully deleted from the database");
+                    bookView.removeBookToObservableList(bookDTO);
+                }else{
+                    bookView.addDisplayAlertMessage("Delete Error","Problem at deleting a Book","There was a problem with the database. Please try again");
+                }
+            }else{
+                bookView.addDisplayAlertMessage("Delete Error","Problem at deleting a Book","You must select a book before pressing the delete button.");
+            }
         }
     }
 
@@ -105,5 +107,4 @@ public class BookController {
                 bookView.addDisplayAlertMessage("Sale Error", "No Book Selected", "You must select a book before pressing the sale button.");
             }
         }
-    }
-}
+    }}

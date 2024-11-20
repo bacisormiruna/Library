@@ -16,7 +16,7 @@ import view.model.BookDTO;
 
 import java.util.List;
 //DTO =  Data Transfer Object scopuri multiple: pentru informatii confidentiale
-public class BookView  extends GridPane{
+public class BookView{
     private TableView bookTableView; //construit in mod dinamic sa extraga automat ce am eu nevoie
     private final ObservableList<BookDTO> booksObservableList; //se update-aza automat daca cumva se executa modificari asupra unei tabele
     private TextField authorTextField;
@@ -46,7 +46,7 @@ public class BookView  extends GridPane{
 
         initTableView(gridPane);
         initSaveOptions(gridPane);
-        primaryStage.show();
+        //primaryStage.show();
 
     }
 

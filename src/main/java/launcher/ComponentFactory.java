@@ -59,7 +59,7 @@ public class ComponentFactory { //clasa Singleton
         List<BookDTO> bookDTOs = BookMapper.convertBookListToBookDTOList(bookService.findAll());
         this.bookView = new BookView(primaryStage,bookDTOs);
         this.bookController = new BookController(bookView, bookService); //interactionam doar cu Service, niciodata cu Repository
-        this.loginController= new LoginController(loginView,authentificationService,primaryStage, bookView);
+        this.loginController= new LoginController(loginView,authentificationService,primaryStage, bookView, bookService);
     }
 
     public BookView getBookView() {
