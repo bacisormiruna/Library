@@ -22,11 +22,15 @@ public class LoginView {
     private Button signInButton;
     private Button logInButton;
     private Text actiontarget;
+    private final Stage stage;
+    private GridPane gridPane;
+    private EventHandler<ActionEvent> loginSuccessHandler;
 
     public LoginView(Stage primaryStage) {
+        this.stage= primaryStage;
         primaryStage.setTitle("Book Store");
 
-        GridPane gridPane = new GridPane();
+        gridPane = new GridPane();
         initializeGridPane(gridPane);
 
         Scene scene = new Scene(gridPane, 720, 480);
@@ -98,5 +102,19 @@ public class LoginView {
 
     public void addRegisterButtonListener(EventHandler<ActionEvent> signInButtonListener) {
         signInButton.setOnAction(signInButtonListener);
+    }
+
+    public void show() {
+        stage.show();
+    }
+    public GridPane getLoginPane() {
+        return gridPane;
+    }
+    public void setLoginAction(EventHandler<ActionEvent> eventHandler) {
+        logInButton.setOnAction(eventHandler);
+    }
+
+    public Stage getStage() {
+        return stage;
     }
 }
