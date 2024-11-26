@@ -7,6 +7,8 @@ import service.book.BookService;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
+
 //Service poate vedea si folosi repository
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
@@ -42,9 +44,9 @@ public class BookServiceImpl implements BookService {
 
         return (int) ChronoUnit.YEARS.between(book.getPublishedDate(), now);
     }
-    @Override
+   /* @Override
     public boolean sale(Long bookId, int quantity) {
-        if (quantity>0){
+        if ( quantity>0 ){
         Book book = this.findById(bookId);//se fac verificarile o singura data, se cauta dupa id cartea de vandut
         if (book.getStock() >= quantity) {
             book.setStock(book.getStock() - quantity);
@@ -52,5 +54,26 @@ public class BookServiceImpl implements BookService {
             }
         }
         return false;
-    }
+    }*/
+   public boolean sale(Long bookId, int quantity) {
+       Optional<Book> bookOptional = bookRepository.findById(bookId);
+
+       if (bookOptional.isPresent()) {
+           Book book = bookOptional.get();
+
+           if (book.getStock() < quantity) {
+               return false; // Stoc insuficient
+           }
+
+           double totalPrice = book.getPrice() * quantity;
+           book.setStock(book.getStock() - quantity);
+           boolean isUpdated = bookRepository.update(book);
+
+           if (isUpdated) {
+               return bookRepository.saveOrder(1L, book.getTitle(), book.getAuthor(), totalPrice, quantity); // 1L = ID-ul unui utilizator fictiv pentru testare
+           }
+       }
+       return false;
+   }
+
 }

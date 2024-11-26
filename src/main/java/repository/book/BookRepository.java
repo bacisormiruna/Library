@@ -12,4 +12,5 @@ public interface BookRepository {
     boolean delete(Book book);
     void removeAll();
     boolean update(Book book);
+    boolean saveOrder(Long userId, String title, String author, double totalPrice, int numberOfExemplars);
 }

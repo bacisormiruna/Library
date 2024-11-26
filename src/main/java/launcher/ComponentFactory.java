@@ -3,6 +3,7 @@ package launcher;
 import controller.BookController;
 import controller.LoginController;
 import database.DatabaseConnectionFactory;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage; //componenta de baza pentru JavaFx
 import mapper.BookMapper;
 import repository.book.BookRepository;
@@ -57,7 +58,7 @@ public class ComponentFactory { //clasa Singleton
         this.bookRepository = new BookRepositoryMySQL(connection);
         this.bookService = new BookServiceImpl(bookRepository);
         List<BookDTO> bookDTOs = BookMapper.convertBookListToBookDTOList(bookService.findAll());
-        this.bookView = new BookView(primaryStage,bookDTOs);
+        this.bookView = new BookView(primaryStage,bookDTOs,new GridPane());
         this.bookController = new BookController(bookView, bookService); //interactionam doar cu Service, niciodata cu Repository
         this.loginController= new LoginController(loginView,authentificationService,primaryStage, bookView, bookService);
     }

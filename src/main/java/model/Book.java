@@ -1,5 +1,6 @@
 package model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class Book {
@@ -8,6 +9,7 @@ public class Book {
     private String author;
     private LocalDate publishedDate;
     private Integer stock;
+    private Double price;
 
     public Long getId() {
         return id;
@@ -53,9 +55,16 @@ public class Book {
         }
     }
 
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
 
     @Override
     public String toString(){
-        return"Book Id: "+ id + " Title: " + title + " Author: " + author + " Published date: " + publishedDate + " Stock: " + stock;
+        return"Book Id: "+ id + " Title: " + title + " Author: " + author + " Published date: " + publishedDate + " Price" + price + " Stock: " + stock;
     }
 }

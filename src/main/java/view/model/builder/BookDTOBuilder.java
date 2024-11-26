@@ -3,6 +3,8 @@ package view.model.builder;
 import model.builder.BookBuilder;
 import view.model.BookDTO;
 
+import java.math.BigDecimal;
+
 public class BookDTOBuilder {
     private BookDTO bookDTO;
     public BookDTOBuilder(){
@@ -27,6 +29,12 @@ public class BookDTOBuilder {
         bookDTO.setStock(stock);
         return this;
     }
+
+    public BookDTOBuilder setPrice(Double price){//am adaugat si set pentru noua coloana de stoc
+        bookDTO.setPrice(price);
+        return this;
+    }
+
 
     public BookDTO build(){
         return bookDTO;
