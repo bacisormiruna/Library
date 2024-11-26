@@ -2,6 +2,9 @@ package view.model;
 
 
 import javafx.beans.property.*;
+
+import java.math.BigDecimal;
+
 //pentru partea de Binding Data -> preluarea datelor din baza de date pentru maparea in interfata ca sa se creeze dinamic, in mod automat
 public class BookDTO {
     private LongProperty idProperty;
@@ -73,5 +76,23 @@ public class BookDTO {
         }
         return stock;
     }
+
+    private DoubleProperty price;
+
+    public DoubleProperty priceProperty() {
+        if (price == null) {
+            price = new SimpleDoubleProperty(this, "price"); // Inițializează cu valoarea implicită 0.0
+        }
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        priceProperty().set(price);  // Setează valoarea Double în `DoubleProperty`
+    }
+
+    public Double getPrice() {
+        return priceProperty().get();  // Obține valoarea Double din `DoubleProperty`
+    }
+
 
 }

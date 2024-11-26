@@ -71,11 +71,15 @@ public class BookRepositoryMySQL implements BookRepository{
     @Override
     public boolean save(Book book) {
 
+        if (book.getPrice() == null) {
+            book.setPrice(0.0); // Setezi o valoare default pentru preț
+        }
         if (book.getStock() == null) {
             book.setStock(0); // Setez o valoare default 0
         }
+
         //String newSql = "INSERT INTO book VALUES(null, \'" + book.getAuthor() + "\', \'" + book.getTitle() +"\', \'" + book.getPublishedDate()+ "\');";
-          String newSql = "INSERT INTO book VALUES(null, ?, ?, ?, ?);";
+          String newSql = "INSERT INTO book VALUES(null, ?, ?, ?, ?, ?);";
         try{
             //Statement statement= connection.createStatement();
             //statement.executeUpdate(newSql);
@@ -83,7 +87,8 @@ public class BookRepositoryMySQL implements BookRepository{
             preparedStatement.setString(1, book.getAuthor());
             preparedStatement.setString(2, book.getTitle());
             preparedStatement.setDate(3, java.sql.Date.valueOf(book.getPublishedDate()));
-            preparedStatement.setLong(4, book.getStock());
+            preparedStatement.setDouble(4, book.getPrice());
+            preparedStatement.setLong(5, book.getStock());
             int rowsInserted = preparedStatement.executeUpdate();
 
             return (rowsInserted != 1) ? false : true;
@@ -123,6 +128,7 @@ public class BookRepositoryMySQL implements BookRepository{
                 .setTitle(resultSet.getString("title"))
                 .setAuthor(resultSet.getString("author"))
                 .setPublishedDate(new java.sql.Date(resultSet.getDate("publishedDate").getTime()).toLocalDate())
+                .setPrice(resultSet.getDouble("price"))
                 .setStock(resultSet.getInt("stock"))
                 .build();
     }
@@ -132,19 +138,38 @@ public class BookRepositoryMySQL implements BookRepository{
             System.out.println("Book ID is null, cannot update the book.");
             return false;  // Sau poți arunca o excepție personalizată dacă vrei
         }
-        String sql = "UPDATE book SET author = ?, title = ?, publishedDate = ?, stock = ? WHERE id = ?";
+        String sql = "UPDATE book SET author = ?, title = ?, publishedDate = ?, price = ?, stock = ? WHERE id = ?";
         try{
             PreparedStatement statement = connection.prepareStatement(sql);
 
             statement.setString(1, book.getAuthor());
             statement.setString(2, book.getTitle());
             statement.setDate(3, java.sql.Date.valueOf(book.getPublishedDate()));
-            statement.setInt(4, book.getStock());
-            statement.setLong(5, book.getId());
+            statement.setDouble(4 , book.getPrice());
+            statement.setInt(5, book.getStock());
+            statement.setLong(6, book.getId());
 
             int rowsUpdated = statement.executeUpdate();
             return rowsUpdated > 0;
 
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean saveOrder(Long userId, String title, String author, double totalPrice, int numberOfExemplars) {
+        String sql = "INSERT INTO orders (user_id, title, author, total_price, number_of_exemplars) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setLong(1, userId);
+            preparedStatement.setString(2, title);
+            preparedStatement.setString(3, author);
+            preparedStatement.setDouble(4, totalPrice);
+            preparedStatement.setInt(5, numberOfExemplars);
+
+            int rowsInserted = preparedStatement.executeUpdate();
+            return rowsInserted > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

@@ -30,12 +30,13 @@ public class BookController {
         public void handle(ActionEvent event) {
             String title= bookView.getTitle();
             String author=bookView.getAuthor();
+            Double price = bookView.getPrice();
             Integer stock = bookView.getStock(); // Convertim textul în întreg
 
-            if(title.isEmpty() || author.isEmpty() || stock==null){
+            if(title.isEmpty() || author.isEmpty() || price==null || stock==null){
                 bookView.addDisplayAlertMessage("Save Error","Problem at Author, Title or Stock fields","Cannot have an empty field");
             }else{
-                BookDTO bookDTO= new BookDTOBuilder().setTitle(title).setAuthor(author).setStock(stock).build();
+                BookDTO bookDTO= new BookDTOBuilder().setTitle(title).setAuthor(author).setPrice(price).setStock(stock).build();
                 boolean savedBook = booksService.save(BookMapper.convertBookDTOToBook(bookDTO));
                 if (savedBook){
                     bookView.addDisplayAlertMessage("Save Successful","Book Added","Book was successfully added to the database!");

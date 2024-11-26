@@ -9,7 +9,7 @@ public class BookBuilder {
     private Book book;
 
     public BookBuilder(){
-        book=new Book();
+        book = new Book();
     }
 
     public BookBuilder setId(Long id){
@@ -34,6 +34,11 @@ public class BookBuilder {
 
     public BookBuilder setStock(Integer stock){
         book.setStock(stock);
+        return this;
+    }
+
+    public BookBuilder setPrice(Double price){
+        book.setPrice(price);
         return this;
     }
 
