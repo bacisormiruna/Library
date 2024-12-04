@@ -25,12 +25,12 @@ public class BookDTOBuilder {
         return this;
     }
 
-    public BookDTOBuilder setStock(Integer stock){//am adaugat si set pentru noua coloana de stoc
+    public BookDTOBuilder setStock(Integer stock){
         bookDTO.setStock(stock);
         return this;
     }
 
-    public BookDTOBuilder setPrice(Double price){//am adaugat si set pentru noua coloana de stoc
+    public BookDTOBuilder setPrice(Double price){
         bookDTO.setPrice(price);
         return this;
     }

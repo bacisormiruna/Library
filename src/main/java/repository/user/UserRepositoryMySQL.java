@@ -18,9 +18,8 @@ public class UserRepositoryMySQL implements UserRepository {
         this.rightsRolesRepository = rightsRolesRepository;
     }
 
-    // SQL injection attacks should not work
     @Override
-    public List<User> findAll() { //!!! tema
+    public List<User> findAll() {
         List<User> users = new ArrayList<>();
         String findAllSql = "SELECT * FROM `" + USER + "`";
 
@@ -37,12 +36,10 @@ public class UserRepositoryMySQL implements UserRepository {
                 users.add(user);
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Afișează eventualele erori
+            e.printStackTrace();
         }
         return users;
-
     }
-
 
     @Override
     public Notification<User> findByUsernameAndPassword(String username, String password) {

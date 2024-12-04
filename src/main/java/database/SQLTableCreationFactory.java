@@ -12,7 +12,6 @@ public class SQLTableCreationFactory {
                         "  PRIMARY KEY (id)," +
                         "  UNIQUE KEY id_UNIQUE (id)" +
                         ") ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;";
-
             case USER:
                 return "CREATE TABLE IF NOT EXISTS user (" +
                         "  id INT NOT NULL AUTO_INCREMENT," +
@@ -77,7 +76,18 @@ public class SQLTableCreationFactory {
                         "    REFERENCES role (id)" +
                         "    ON DELETE CASCADE" +
                         "    ON UPDATE CASCADE);";
-
+            /*case ORDER:
+                return "CREATE TABLE IF NOT EXISTS orders (" +
+                        " id BIGINT NOT NULL AUTO_INCREMENT," +
+                        " user_id INT NOT NULL," +
+                        " title VARCHAR(500) NOT NULL," +
+                        " author VARCHAR(500) NOT NULL," +
+                        " price DECIMAL(10, 2) NOT NULL," +
+                        " number_of_exemplars INT NOT NULL," +
+                        " sale_date DATETIME DEFAULT CURRENT_TIMESTAMP," +
+                        " PRIMARY KEY (id)," +
+                        " FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE" +
+                        ") ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8";*/
             default:
                 return "";
 

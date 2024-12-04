@@ -16,25 +16,21 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-public class LoginView extends  GridPane{
+public class LoginView{
     private TextField userTextField;
     private PasswordField passwordField;
     private Button signInButton;
     private Button logInButton;
     private Text actiontarget;
-    private final Stage stage;
     private GridPane gridPane;
-    private final Scene scene;
-    private EventHandler<ActionEvent> loginSuccessHandler;
 
     public LoginView(Stage primaryStage) {
-        this.stage = primaryStage;
         primaryStage.setTitle("Book Store");
 
         gridPane = new GridPane();
         initializeGridPane(gridPane);
 
-        scene = new Scene(gridPane, 720, 480);
+        Scene scene = new Scene(gridPane, 720, 480);
         primaryStage.setScene(scene);
 
         initializeSceneTitle(gridPane);
@@ -105,17 +101,4 @@ public class LoginView extends  GridPane{
         signInButton.setOnAction(signInButtonListener);
     }
 
-    public void show() {
-        stage.show();
-    }
-    public GridPane getLoginPane() {
-        return gridPane;
-    }
-    public void setLoginAction(EventHandler<ActionEvent> eventHandler) {
-        logInButton.setOnAction(eventHandler);
-    }
-
-    public Stage getStage() {
-        return stage;
-    }
 }

@@ -18,11 +18,10 @@ import java.util.List;
 //DTO =  Data Transfer Object scopuri multiple: pentru informatii confidentiale
 public class BookView{
     private TableView bookTableView; //construit in mod dinamic sa extraga automat ce am eu nevoie
-    private final ObservableList<BookDTO> booksObservableList; //se update-aza automat daca cumva se executa modificari asupra unei tabele
+    private final ObservableList<BookDTO> booksObservableList;
     private TextField authorTextField;
     private TextField titleTextField;
     private TextField priceTextField;
-   // private TextField stockTextField;
     private ComboBox<Integer> stockComboBox;
     private Label authorLabel;
     private Label titleLabel;
@@ -30,22 +29,18 @@ public class BookView{
     private Label stockLabel;
     private Button saveButton;
     private Button deleteButton;
-
     private Button saleButton;
-    private Scene scene;
-    private GridPane gridPane;
 
 
-    public BookView(Stage primaryStage, List<BookDTO> books, GridPane gridPane){
+    public BookView(Stage primaryStage, List<BookDTO> books){
         primaryStage.setTitle("Library");
-        gridPane = new GridPane();
+        GridPane gridPane = new GridPane();
         initializeGridPage(gridPane);
 
-        scene=new Scene(gridPane,1200,960);
+        Scene scene=new Scene(gridPane,1200,960);
         primaryStage.setScene(scene);
-        this.scene=scene;
 
-        booksObservableList = FXCollections.observableArrayList(books);//sa nu mai facem nicaieri in cod o alta atribuire deoarece se va rupe legatura cu tableView si nu se vor mai vedea modificarile
+        booksObservableList = FXCollections.observableArrayList(books);
 
         initTableView(gridPane);
         initSaveOptions(gridPane);
@@ -72,7 +67,6 @@ public class BookView{
         authorColumn.setCellValueFactory(new PropertyValueFactory<>("author"));
         authorColumn.setPrefWidth(300);
 
-        //partea de pret
         TableColumn<BookDTO, String> priceColumn = new TableColumn<BookDTO, String>("Price");
         priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
         priceColumn.setPrefWidth(100);
@@ -84,9 +78,8 @@ public class BookView{
         bookTableView.getColumns().addAll(titleColumn,authorColumn, priceColumn, stockColumn);
         bookTableView.setItems(booksObservableList);
 
-        bookTableView.setPrefWidth(700); // Adjust based on your desired width
+        bookTableView.setPrefWidth(700);
 
-        // Set a resize policy to let columns expand
         bookTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         gridPane.add(bookTableView,0,0,5,1);
     }
@@ -113,8 +106,6 @@ public class BookView{
         stockComboBox.getItems().addAll(10, 15, 20, 25, 30, 50);
         stockComboBox.setPromptText("Please select stock amount");
         gridPane.add(stockComboBox, 8, 1);
-        //stockTextField = new TextField();
-        //gridPane.add(stockTextField, 6, 1);
 
         saveButton = new Button("Save");
         gridPane.add(saveButton,9,1);
@@ -163,10 +154,9 @@ public class BookView{
     }
     public Double getPrice() {
         try {
-            return Double.parseDouble(priceTextField.getText().trim());  // convertește textul la Double
+            return Double.parseDouble(priceTextField.getText().trim());
         } catch (NumberFormatException e) {
-            // În cazul în care textul nu poate fi convertit într-un Double valid, poți returna un preț implicit sau arunca o excepție
-            return 0.0;  // De exemplu, returnezi 0 în cazul unui input invalid
+            return 0.0;
         }
     }
 

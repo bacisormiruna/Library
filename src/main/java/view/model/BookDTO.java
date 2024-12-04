@@ -7,17 +7,17 @@ import java.math.BigDecimal;
 
 //pentru partea de Binding Data -> preluarea datelor din baza de date pentru maparea in interfata ca sa se creeze dinamic, in mod automat
 public class BookDTO {
+    //normal nu setez un id pentru ca se genereaza automat, dar am nevoie pentru salvarea in baza de date ca mai apoi sa gasesc cartea pe care vreau sa o vand
     private LongProperty idProperty;
-
     public void setId(Long id){
         idProperty().set(id);
-    }//normal nu setez un id pentru ca se genereaza automat, dar am nevoie pentru salvarea in baza de date ca mai apoi sa gasesc cartea pe care vreau sa o vand
+    }
 
     public Long getId(){
         return idProperty().get();
     }
 
-    public LongProperty idProperty(){//face bind la numele de coloana
+    public LongProperty idProperty(){
         if (idProperty == null){
             idProperty = new SimpleLongProperty(this,"id");
         }
@@ -56,14 +56,13 @@ public class BookDTO {
         return title;
     }
 
-   // am adaugat!
     private IntegerProperty stock;
 
     public void setStock(Integer stock){
         if (stock != null) {
             stockProperty().set(stock);
         } else {
-            stockProperty().set(0); // Dacă valoarea este null, setează 0
+            stockProperty().set(0);
         }
     }
     public Integer getStock(){
@@ -81,18 +80,17 @@ public class BookDTO {
 
     public DoubleProperty priceProperty() {
         if (price == null) {
-            price = new SimpleDoubleProperty(this, "price"); // Inițializează cu valoarea implicită 0.0
+            price = new SimpleDoubleProperty(this, "price");
         }
         return price;
     }
 
     public void setPrice(Double price) {
-        priceProperty().set(price);  // Setează valoarea Double în `DoubleProperty`
+        priceProperty().set(price);
     }
 
     public Double getPrice() {
-        return priceProperty().get();  // Obține valoarea Double din `DoubleProperty`
+        return priceProperty().get();
+
     }
-
-
 }

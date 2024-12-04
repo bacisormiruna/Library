@@ -9,4 +9,5 @@ public interface AuthentificationService {
     Notification<User> login(String username, String password);
 
     boolean logout(User user);
+    Long getCurrentUserId();
 }

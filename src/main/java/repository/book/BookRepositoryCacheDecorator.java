@@ -59,6 +59,7 @@ public class BookRepositoryCacheDecorator extends BookRepositoryDecorator{
 
     @Override
     public boolean saveOrder(Long userId, String title, String author, double totalPrice, int numberOfExemplars){
-        return true;
+        cache.invalidateCache();
+        return decoratedBookRepository.saveOrder(userId,title,author,totalPrice,numberOfExemplars);
     }
 }

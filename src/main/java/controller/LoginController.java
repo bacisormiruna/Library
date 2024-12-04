@@ -4,8 +4,11 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import launcher.ComponentFactory;
+import launcher.AdminComponentFactory;
+import launcher.EmployeeComponentFactory;
+import launcher.LoginComponentFactory;
 import model.Book;
+import model.Role;
 import model.User;
 import model.validation.Notification;
 import model.validation.UserValidator;
@@ -22,24 +25,17 @@ import static mapper.BookMapper.convertBookListToBookDTOList;
 public class LoginController {
     private final LoginView loginView;
     private final AuthentificationService authenticationService;
-   // private final Scene bookScene;
-    private final Stage stage;
-    private final BookView bookView;
-    private final BookService bookService;
+    private User curentUser;
 
-    public LoginController(LoginView loginView, AuthentificationService authenticationService, Stage stage, BookView bookView, BookService bookService) {
+    public LoginController(LoginView loginView, AuthentificationService authenticationService) {
         this.loginView = loginView;
         this.authenticationService = authenticationService;
-        this.stage=stage;
-        this.bookView=bookView;
-       // this.bookScene = new Scene(bookView.getBookTableView(), 600, 600);
-        this.bookService=bookService;
+        this.curentUser=new User();
         this.loginView.addLoginButtonListener(new LoginButtonListener());
         this.loginView.addRegisterButtonListener(new RegisterButtonListener());
     }
 
     private class LoginButtonListener implements EventHandler<ActionEvent> {
-
         @Override
         public void handle(javafx.event.ActionEvent event) {
             String username = loginView.getUsername();
@@ -50,14 +46,28 @@ public class LoginController {
             if (loginNotification.hasErrors()) {
                 loginView.setActionTargetText(loginNotification.getFormattedErrors());
             } else {
-                loginView.setActionTargetText("Login Successfull!");
-                //Scene bookScene = new Scene(bookView, 600, 600);
-                Stage stage1 = stage;  // Stage-ul existent transmis prin constructor
-                List<Book> updatedBooks = bookService.findAll();
-                BookView newBookView = new BookView(stage1, convertBookListToBookDTOList(updatedBooks), new GridPane());  // Creăm o nouă instanță de BookView cu lista de cărți
-                Scene newScene = stage.getScene();//new Scene(newBookView.getBookTableView(), 600, 600);  // Creăm o scenă cu BookView
-                stage.setScene(newScene);
+                loginView.setActionTargetText("Login Successful!");
+                curentUser = loginNotification.getResult();
+                
+                List<Role> roles = curentUser.getRoles();
+                if (roles != null && !roles.isEmpty()) {
 
+                    String role = roles.get(0).getRole();
+                    switch (role) {
+                        case "employee":
+                            EmployeeComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
+                            break;
+                        case "administrator":
+                            AdminComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
+                            break;
+                        default:
+                            LoginComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
+                            break;
+                    }
+                } else {
+                    loginView.setActionTargetText("User has no assigned role.");
+                    System.out.println("No roles assigned to user.");
+                }
             }
         }
     }

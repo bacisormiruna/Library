@@ -1,7 +1,7 @@
 package model;
 public class Order {
-    private final Long userId; // ID-ul utilizatorului care a făcut comanda
-    private final Long bookId; // ID-ul cărții comandate
+    private final Long userId;
+    private final Long bookId;
     private final String title;
     private final String author;
     private final double totalPrice;

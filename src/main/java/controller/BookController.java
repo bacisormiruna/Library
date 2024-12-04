@@ -15,11 +15,9 @@ import java.util.Optional;
 public class BookController {
     private final BookView bookView;
     private final BookService booksService;
-    //private final Stage stage;
     public BookController(BookView bookView, BookService bookService){
         this.bookView=bookView;
         this.booksService=bookService;
-        //this.stage=stage;
         this.bookView.addSaveButtonListener(new SaveButtonListener());
         this.bookView.addDeleteButtonListener(new DeleteButtonListener());
         this.bookView.addSaleButtonListener(new SaleButtonListener());
@@ -31,7 +29,7 @@ public class BookController {
             String title= bookView.getTitle();
             String author=bookView.getAuthor();
             Double price = bookView.getPrice();
-            Integer stock = bookView.getStock(); // Convertim textul în întreg
+            Integer stock = bookView.getStock();
 
             if(title.isEmpty() || author.isEmpty() || price==null || stock==null){
                 bookView.addDisplayAlertMessage("Save Error","Problem at Author, Title or Stock fields","Cannot have an empty field");
@@ -78,12 +76,12 @@ public class BookController {
                     return;
                 }
 
-                TextInputDialog fereastra = new TextInputDialog();//dupa ce apas pe butonul de sale si inainte am selectat o carte sa mi se deschida o fereastra care sa imi ceara cantitatea pe care vreau sa o vand
+                TextInputDialog fereastra = new TextInputDialog();
                 fereastra.setTitle("Selling book(s)");
                 fereastra.setHeaderText("Please enter quantity to sell");
                 fereastra.setContentText("Quantity:");
 
-                Optional<String> res = fereastra.showAndWait();//astept pana se inchide de user fereastra
+                Optional<String> res = fereastra.showAndWait();
                 if (res.isPresent()) {
                     try {
                         int quantity = Integer.parseInt(res.get());
@@ -94,9 +92,9 @@ public class BookController {
                         boolean saleSuccessful = booksService.sale(bookId, quantity);
 
                         if (saleSuccessful) {
-                            bookDTO.setStock(bookDTO.getStock() - quantity);//update la stoc
+                            bookDTO.setStock(bookDTO.getStock() - quantity);
                             bookView.addDisplayAlertMessage("Sale Successful", "Book Sold", "Book was successfully sold!");
-                            bookView.getBookTableView().refresh();  // sa se vada modificarile, scaderea stocului dupa vanzare
+                            bookView.getBookTableView().refresh();
                         } else {
                             bookView.addDisplayAlertMessage("Sale Error", "Insufficient Stock", "There are not enough books in stock.");
                         }

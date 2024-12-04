@@ -4,6 +4,7 @@ import model.Right;
 import model.Role;
 import model.User;
 
+import java.sql.SQLException;
 import java.util.List;
 public interface RightsRolesRepository {
     void addRole(String role);
@@ -21,4 +22,5 @@ public interface RightsRolesRepository {
     List<Role> findRolesForUser(Long userId);
 
     void addRoleRight(Long roleId, Long rightId);
+
 }
