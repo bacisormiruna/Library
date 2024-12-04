@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+
 public class BookRepositoryMySQL implements BookRepository{
     private Connection connection;
     //injectam din exterior aceasta conexiune
@@ -59,7 +60,7 @@ public class BookRepositoryMySQL implements BookRepository{
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
 
-            if (resultSet.next()) { // Dacă există un rezultat, construiește obiectul Book -if pentru ca avem un singur element si id-ul este unic
+            if (resultSet.next()) {
                 book = Optional.of(getBookFromResultSet(resultSet));
             }
         } catch (SQLException e) {
@@ -78,11 +79,8 @@ public class BookRepositoryMySQL implements BookRepository{
             book.setStock(0); // Setez o valoare default 0
         }
 
-        //String newSql = "INSERT INTO book VALUES(null, \'" + book.getAuthor() + "\', \'" + book.getTitle() +"\', \'" + book.getPublishedDate()+ "\');";
-          String newSql = "INSERT INTO book VALUES(null, ?, ?, ?, ?, ?);";
+        String newSql = "INSERT INTO book VALUES(null, ?, ?, ?, ?, ?);";
         try{
-            //Statement statement= connection.createStatement();
-            //statement.executeUpdate(newSql);
             PreparedStatement preparedStatement = connection.prepareStatement(newSql);
             preparedStatement.setString(1, book.getAuthor());
             preparedStatement.setString(2, book.getTitle());
@@ -100,7 +98,7 @@ public class BookRepositoryMySQL implements BookRepository{
 
     @Override
     public boolean delete(Book book) {
-        String newSql="DELETE FROM book WHERE author=\'" +book.getAuthor() + "\' AND title=\'" +book.getTitle() + "\';";
+        String newSql = "DELETE FROM book WHERE author=\'" +book.getAuthor() + "\' AND title=\'" +book.getTitle() + "\';";
         try{
             Statement statement= connection.createStatement();
             statement.executeUpdate(newSql);
@@ -136,7 +134,7 @@ public class BookRepositoryMySQL implements BookRepository{
     public boolean update(Book book) {
         if (book.getId() == null) {
             System.out.println("Book ID is null, cannot update the book.");
-            return false;  // Sau poți arunca o excepție personalizată dacă vrei
+            return false;
         }
         String sql = "UPDATE book SET author = ?, title = ?, publishedDate = ?, price = ?, stock = ? WHERE id = ?";
         try{
@@ -159,18 +157,19 @@ public class BookRepositoryMySQL implements BookRepository{
     }
 
     @Override
-    public boolean saveOrder(Long userId, String title, String author, double totalPrice, int numberOfExemplars) {
-        String sql = "INSERT INTO orders (user_id, title, author, total_price, number_of_exemplars) VALUES (?, ?, ?, ?, ?)";
+    public boolean saveOrder(Long userId, String title, String author, double price, int numberOfExemplars) {
+        String sql = "INSERT INTO orders(user_id, title, author, price, number_of_exemplars) VALUES (?, ?, ?, ?, ?);";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setLong(1, userId);
             preparedStatement.setString(2, title);
             preparedStatement.setString(3, author);
-            preparedStatement.setDouble(4, totalPrice);
+            preparedStatement.setDouble(4, price);
             preparedStatement.setInt(5, numberOfExemplars);
 
             int rowsInserted = preparedStatement.executeUpdate();
             return rowsInserted > 0;
         } catch (SQLException e) {
+            System.out.println("Eroare la salvarea comenzii: " + e.getMessage());
             e.printStackTrace();
             return false;
         }

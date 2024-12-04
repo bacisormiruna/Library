@@ -13,10 +13,12 @@ import javax.naming.AuthenticationException;
 import java.security.MessageDigest;
 import java.util.Collections;
 
-import static database.Constants.Roles.CUSTOMER;
+import static database.Constants.Roles.*;
+
 public class AuthentificationServiceMySQL implements AuthentificationService {
     private final UserRepository userRepository;
     private final RightsRolesRepository rightsRolesRepository;
+    private User currentUser;
 
     public AuthentificationServiceMySQL(UserRepository userRepository, RightsRolesRepository rightsRolesRepository) {
         this.userRepository = userRepository;
@@ -25,12 +27,11 @@ public class AuthentificationServiceMySQL implements AuthentificationService {
 
     @Override
     public Notification<Boolean> register(String username, String password) {
-
-        Role customerRole = rightsRolesRepository.findRoleByTitle(CUSTOMER);
+        Role employeeRole = rightsRolesRepository.findRoleByTitle(EMPLOYEE);
         User user = new UserBuilder()
                 .setUsername(username)
                 .setPassword(password)
-                .setRoles(Collections.singletonList(customerRole))
+                .setRoles(Collections.singletonList(employeeRole))
                 .build();
         UserValidator userValidator = new UserValidator(user);
         boolean userValid= userValidator.validate();
@@ -42,16 +43,24 @@ public class AuthentificationServiceMySQL implements AuthentificationService {
             user.setPassword((hashPassword(password)));
             userRegisterNotification.setResult(userRepository.save(user));
         }
-
         return userRegisterNotification;
     }
 
     @Override
     public Notification<User> login(String username, String password) {
         try {
-            return userRepository.findByUsernameAndPassword(username, hashPassword(password));
+            Notification<User> loginNotification = userRepository.findByUsernameAndPassword(username, hashPassword(password));
+
+            if (loginNotification.hasErrors() || loginNotification.getResult() == null) {
+                loginNotification.addError("Autentificare esuata");
+                return loginNotification;
+            }
+
+            currentUser = loginNotification.getResult();
+
+            return loginNotification;
         } catch (AuthenticationException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Eroare la autentificare: " + e.getMessage(), e);
         }
     }
 
@@ -60,6 +69,12 @@ public class AuthentificationServiceMySQL implements AuthentificationService {
         return false;
     }
 
+    public Long getCurrentUserId() {
+        if (currentUser != null) {
+            return currentUser.getId();
+        }
+        return 13L;//pun un anumit angajat care stiu ca exista
+    }
     private String hashPassword(String password) {
         try {
             //Secured Hash Algorithm - 256
@@ -80,4 +95,5 @@ public class AuthentificationServiceMySQL implements AuthentificationService {
             throw new RuntimeException(ex);
         }
     }
+
 }

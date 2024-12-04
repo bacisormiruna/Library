@@ -18,6 +18,7 @@ public class Constants {
     public static class Tables {
         public static final String BOOK = "book";
         public static final String USER = "user";
+        public static final String ORDER = "orders";
         public static final String ROLE = "role";
         public static final String RIGHT = "right";
         public static final String ROLE_RIGHT = "role_right";

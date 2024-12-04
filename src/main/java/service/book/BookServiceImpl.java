@@ -3,6 +3,7 @@ package service.book;
 import model.Book;
 import repository.book.BookRepository;
 import service.book.BookService;
+import service.user.AuthentificationService;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -12,9 +13,10 @@ import java.util.Optional;
 //Service poate vedea si folosi repository
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
-
-    public BookServiceImpl(BookRepository bookRepository){
+    private final AuthentificationService authentificationService;
+    public BookServiceImpl(BookRepository bookRepository, AuthentificationService authentificationService){
         this.bookRepository = bookRepository;
+        this.authentificationService = authentificationService;
     }
     @Override
     public List<Book> findAll() {
@@ -44,36 +46,27 @@ public class BookServiceImpl implements BookService {
 
         return (int) ChronoUnit.YEARS.between(book.getPublishedDate(), now);
     }
-   /* @Override
+
     public boolean sale(Long bookId, int quantity) {
-        if ( quantity>0 ){
-        Book book = this.findById(bookId);//se fac verificarile o singura data, se cauta dupa id cartea de vandut
-        if (book.getStock() >= quantity) {
+        Optional<Book> bookOptional = bookRepository.findById(bookId);
+
+        if (bookOptional.isPresent()) {
+            Book book = bookOptional.get();
+
+            if (book.getStock() < quantity) {
+                return false;
+            }
+
+            double price = book.getPrice();
             book.setStock(book.getStock() - quantity);
-            return bookRepository.update(book);
+            boolean isUpdated = bookRepository.update(book);
+
+            if (isUpdated) {
+                Long userId = authentificationService.getCurrentUserId(); //sa imi ia userId-ul curent al userului care a vandut carti
+                return bookRepository.saveOrder(userId, book.getTitle(), book.getAuthor(), price, quantity);
             }
         }
         return false;
-    }*/
-   public boolean sale(Long bookId, int quantity) {
-       Optional<Book> bookOptional = bookRepository.findById(bookId);
-
-       if (bookOptional.isPresent()) {
-           Book book = bookOptional.get();
-
-           if (book.getStock() < quantity) {
-               return false; // Stoc insuficient
-           }
-
-           double totalPrice = book.getPrice() * quantity;
-           book.setStock(book.getStock() - quantity);
-           boolean isUpdated = bookRepository.update(book);
-
-           if (isUpdated) {
-               return bookRepository.saveOrder(1L, book.getTitle(), book.getAuthor(), totalPrice, quantity); // 1L = ID-ul unui utilizator fictiv pentru testare
-           }
-       }
-       return false;
-   }
+    }
 
 }
