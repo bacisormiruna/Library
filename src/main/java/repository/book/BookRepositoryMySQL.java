@@ -10,8 +10,8 @@ import java.util.Optional;
 
 
 public class BookRepositoryMySQL implements BookRepository{
-    private Connection connection;
     //injectam din exterior aceasta conexiune
+    private Connection connection;
 
     public BookRepositoryMySQL(Connection connection){
         this.connection=connection;
@@ -73,10 +73,10 @@ public class BookRepositoryMySQL implements BookRepository{
     public boolean save(Book book) {
 
         if (book.getPrice() == null) {
-            book.setPrice(0.0); // Setezi o valoare default pentru preț
+            book.setPrice(0.0);
         }
         if (book.getStock() == null) {
-            book.setStock(0); // Setez o valoare default 0
+            book.setStock(0);
         }
 
         String newSql = "INSERT INTO book VALUES(null, ?, ?, ?, ?, ?);";

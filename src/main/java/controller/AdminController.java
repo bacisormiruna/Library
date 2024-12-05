@@ -45,18 +45,18 @@ public class AdminController {
     private class DeleteButtonListener implements EventHandler<ActionEvent> {
         @Override
         public void handle(ActionEvent event) {
-            EmployeeDTO employeeDTO = (EmployeeDTO) adminView.getEmployeeTable().getSelectionModel().getSelectedItem();
+            EmployeeDTO employeeDTO = adminView.getEmployeeTable().getSelectionModel().getSelectedItem();
             if (employeeDTO != null){
                 if (employeeDTO.getRole().equals("administrator")) {
                     adminView.addDisplayAlertMessage("Delete Error","Cannot Delete Administrator","You cannot delete an administrator.");
                     return;
                 }
-                boolean deletionSuccessful = employeeService.delete(EmployeeMapper.convertEmployeeDTOToEmployee(employeeDTO));
-                if (deletionSuccessful){
+                boolean success = employeeService.delete(EmployeeMapper.convertEmployeeDTOToEmployee(employeeDTO));
+                if (success){
                     adminView.addDisplayAlertMessage("Delete Successful","Employee Deleted","Employee was successfully deleted from the database");
                     adminView.removeEmployeeFromTable(employeeDTO);
                 }else{
-                    adminView.addDisplayAlertMessage("Delete Error","Problem at deleting a","There was a problem with the database. Please try again");
+                    adminView.addDisplayAlertMessage("Delete Error","Problem at deleting a Employee","There was a problem with the database. Please try again");
                 }
             } else {
                 adminView.addDisplayAlertMessage("Delete Error","Problem at deleting an Employee","You must select an employee before pressing the delete button.");
