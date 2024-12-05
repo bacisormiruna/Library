@@ -53,16 +53,13 @@ public class EmployeeRepositoryMySQL implements EmployeeRepository {
                long userId = userResultSet.getLong("id");
                String username = userResultSet.getString("username");
 
-               // Recuperează rolul pentru utilizator (presupunând un singur rol asociat)
-               String role = null; // Inițializare rol
+               String role = null;
                try (PreparedStatement rolesStatement = connection.prepareStatement(rolesQuery)) {
                    rolesStatement.setLong(1, userId);
                    ResultSet rolesResultSet = rolesStatement.executeQuery();
 
                    if (rolesResultSet.next()) {
                        long roleId = rolesResultSet.getLong("role_id");
-
-                       // Obține numele rolului
                        try (PreparedStatement roleStatement = connection.prepareStatement(roleQuery)) {
                            roleStatement.setLong(1, roleId);
                            ResultSet roleResultSet = roleStatement.executeQuery();
@@ -72,9 +69,7 @@ public class EmployeeRepositoryMySQL implements EmployeeRepository {
                        }
                    }
                }
-
-               // Creează obiectul Employee cu un singur rol
-               employees.add(new Employee(userId, username, role)); // Modificat pentru a primi un singur rol
+               employees.add(new Employee(userId, username, role));
            }
        } catch (SQLException e) {
            e.printStackTrace();
@@ -82,6 +77,26 @@ public class EmployeeRepositoryMySQL implements EmployeeRepository {
 
        return employees;
    }
+
+    @Override
+    public List<Employee> findEmployees() {
+        List<Employee> employees = new ArrayList<>();
+        String query = "SELECT u.id AS user_id, u.username AS username FROM user u INNER JOIN user_role ur ON u.id = ur.user_id  INNER JOIN role r ON ur.role_id = r.id WHERE r.role = 'employee' ";
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                long userId = resultSet.getLong("user_id");
+                String username = resultSet.getString("username");
+                employees.add(new Employee(userId, username, "employee"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return employees;
+    }
 
 
     @Override
@@ -126,9 +141,6 @@ public class EmployeeRepositoryMySQL implements EmployeeRepository {
         }
         return false;
     }
-
-
-
 
 
     private String hashPassword(String password) {

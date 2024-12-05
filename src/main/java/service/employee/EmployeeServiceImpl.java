@@ -41,17 +41,16 @@ public class EmployeeServiceImpl implements EmployeeService{
             document.add(new Paragraph("Sales Report"));
             document.add(new Paragraph(" "));
 
-            List<Employee> employees = employeeRepository.findAll();
+            List<Employee> employees = employeeRepository.findEmployees();
             for (Employee employee : employees) {
-                int totalBooksSold = employeeRepository.getNumberOfBooksSoldPerEmployee(employee.getId());
-                double totalSalesValue = employeeRepository.getTotalSumOfBooks(employee.getId());
+                int totalBooks = employeeRepository.getNumberOfBooksSoldPerEmployee(employee.getId());
+                double totalSales = employeeRepository.getTotalSumOfBooks(employee.getId());
 
                 document.add(new Paragraph("Employee: " + employee.getUsername()));
-                document.add(new Paragraph("Books Sold: " + totalBooksSold));
-                document.add(new Paragraph("Total Sales Value: $" + totalSalesValue));
+                document.add(new Paragraph("Books Sold: " + totalBooks));
+                document.add(new Paragraph("Total Sales Value: " + totalSales + " RON"));
                 document.add(new Paragraph(" "));
             }
-
             document.close();
             System.out.println("PDF generated successfully: " + filePath);
         } catch (Exception e) {
